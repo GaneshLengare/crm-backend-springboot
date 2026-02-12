@@ -12,6 +12,7 @@ public class CrmBackendApplication {
 		SpringApplication.run(CrmBackendApplication.class, args);
 	}
 
+
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
