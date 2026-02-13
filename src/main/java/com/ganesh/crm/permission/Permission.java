@@ -25,6 +25,6 @@ public class Permission {
     @Column(nullable = false)
     private String action;       //CREATE, READ, UPDATE, DELETE
 
-    @ManyToMany(mappedBy = "permissions")
-    private Set<UserType> userTypes;   // one permission belongs to many types of user
+    /*@ManyToMany(mappedBy = "permissions")
+    private Set<UserType> userTypes;  */ // one permission belongs to many types of user
 }

@@ -19,14 +19,14 @@ public class UserType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private  String name;            //ADMIN, SALES
+    @Column(name = "type" ,nullable = false, unique = true)
+    private  String typeName;            //ADMIN, SALES
 
-    private String decription;
+    private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+  /*  @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_type_permissions",
     joinColumns = @JoinColumn(name = "user_type_id"),
     inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private Set<Permission> permissions;
+    private Set<Permission> permissions;*/
 }
