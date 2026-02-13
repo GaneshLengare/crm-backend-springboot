@@ -62,4 +62,11 @@ public class CustomerServiceImpl implements CustomerService {
             return customerDTO;
         });
     }
+
+    @Override
+    public CustomerDTO getCustomerByPhone(String phoneNumber) {
+        Customer customer = customerRepository.findById(phoneNumber).orElseThrow(() -> new EntityNotFoundException("Customer Not Found!"));
+        CustomerDTO customerDTO1 = modelMapper.map(customer, CustomerDTO.class);
+        return customerDTO1;
+    }
 }

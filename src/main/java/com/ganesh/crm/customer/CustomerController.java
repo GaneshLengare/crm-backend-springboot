@@ -33,4 +33,11 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
+
+    @GetMapping("/{phoneNumber}")
+    public ResponseEntity<CustomerDTO> getSingleCustomer(@PathVariable String phoneNumber) {
+        CustomerDTO customerDTO = customerService.getCustomerByPhone(phoneNumber);
+        return ResponseEntity.ok(customerDTO);
+    }
+
 }

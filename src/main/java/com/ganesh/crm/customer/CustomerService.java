@@ -9,4 +9,7 @@ public interface CustomerService {
 
 
     Page<CustomerDTO> getAllCustomers(int page, int size, String sortBy);
+
+
+    CustomerDTO getCustomerByPhone(String phoneNumber);
 }
