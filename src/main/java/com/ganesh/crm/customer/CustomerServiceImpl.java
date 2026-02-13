@@ -5,38 +5,61 @@ import com.ganesh.crm.user.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private final ModelMapper modelMapper;
-    private final CustomerRepository customerRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(ModelMapper modelMapper,
-                               CustomerRepository customerRepository,
-                               UserRepository userRepository) {
-        this.modelMapper = modelMapper;
-        this.customerRepository = customerRepository;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
-    public CustomerDTO createCustomer(CustomerDTO customerDTO, String userPhone) {
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
 
-        if (customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
-            throw new EntityExistsException("Customer with this phone number already exists");
+        if (customerRepository.existsById(customerDTO.getPhoneNumber())) {
+            throw new RuntimeException("Customer already exists");
         }
 
-        User user = userRepository.findByPhoneNumber(userPhone)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(customerDTO.getUserPhone())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
         Customer customer = modelMapper.map(customerDTO, Customer.class);
+
         customer.setUser(user);
+        customer.setStatus(Customer.Status.ACTIVE);
 
         Customer saved = customerRepository.save(customer);
 
-        return modelMapper.map(saved, CustomerDTO.class);
+        CustomerDTO response =
+                modelMapper.map(saved, CustomerDTO.class);
+
+        response.setStatus(saved.getStatus().name());
+        response.setUserPhone(saved.getUser().getPhoneNumber());
+
+        return response;
+    }
+
+    @Override
+    public Page<CustomerDTO> getAllCustomers(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page,size, Sort.by(sortBy).ascending());
+
+        Page<Customer> page1 = customerRepository.findAll(pageRequest);
+        return page1.map(customer -> {
+            CustomerDTO customerDTO = modelMapper.map(customer, CustomerDTO.class);
+            customerDTO.setStatus(customer.getStatus().name());
+            customerDTO.setUserPhone(customer.getUser().getPhoneNumber());
+            return customerDTO;
+        });
     }
 }

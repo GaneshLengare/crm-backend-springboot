@@ -2,34 +2,35 @@ package com.ganesh.crm.customer;
 
 import com.ganesh.crm.customer.CustomerDTO;
 import com.ganesh.crm.customer.CustomerService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/aepi/customrs")
+@RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerService customerService;
+    @Autowired
+    private CustomerService customerService;
 
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+
+    @PostMapping("/register")
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
+
+        CustomerDTO customerDTO1 = customerService.createCustomer(customerDTO);
+        return new ResponseEntity<>(customerDTO1,HttpStatus.CREATED);
     }
 
-    @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(
-            @RequestBody CustomerDTO customerDTO,
-            Authentication authentication) {
-
-        String phoneNumber = authentication.getName();
-
-        CustomerDTO response =
-                customerService.createCustomer(customerDTO, phoneNumber);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @GetMapping("/")
+    public ResponseEntity<Page<CustomerDTO>> getAllCustomers (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int size, @RequestParam(defaultValue = "createdAt") String sortBy) {
+        Page<CustomerDTO> customers = customerService.getAllCustomers(page, size, sortBy);
+        return ResponseEntity.ok(customers);
     }
+
 }

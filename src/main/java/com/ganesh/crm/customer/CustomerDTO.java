@@ -25,5 +25,11 @@ public class CustomerDTO {
     @NotBlank
     private String address;
 
+    @NotBlank
+    private String status;
+
+    @NotBlank
+    private String userPhone;
+
 
 }
