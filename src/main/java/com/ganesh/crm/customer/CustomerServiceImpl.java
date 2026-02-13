@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -69,4 +73,43 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDTO customerDTO1 = modelMapper.map(customer, CustomerDTO.class);
         return customerDTO1;
     }
+
+    @Override
+    public List<CustomerDTO> searchCustomers(String keyword) {
+        List<Customer> customer = customerRepository.searchCustomers(keyword);
+
+        return customer.stream().map(customer1 -> {
+            CustomerDTO customerDTO = modelMapper.map(customer1, CustomerDTO.class);
+            customerDTO.setStatus(customer1.getStatus().name());
+            customerDTO.setUserPhone(customer1.getUser().getPhoneNumber());
+            return customerDTO;
+        }).toList();
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(String phoneNumber, CustomerUpdateDTO customerDTO) {
+       Customer customer = customerRepository.findById(phoneNumber).orElseThrow(() -> new EntityNotFoundException("Customer Not FOUND"));
+
+      // customer.setPhoneNumber(customerDTO.getPhoneNumber());
+       customer.setFirstName(customerDTO.getFirstName());
+       customer.setLastName(customerDTO.getLastName());
+       customer.setEmail(customerDTO.getEmail());
+       customer.setAddress(customerDTO.getAddress());
+
+        if (customerDTO.getUserPhone() != null) {
+            User user = userRepository.findById(customerDTO.getUserPhone())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            customer.setUser(user);
+        }
+
+        Customer updateCustomer = customerRepository.save(customer);
+
+        CustomerDTO customerDTO1 = modelMapper.map(customer, CustomerDTO.class);
+        customerDTO1.setStatus(updateCustomer.getStatus().name());
+        customerDTO1.setUserPhone(updateCustomer.getUser().getPhoneNumber());
+
+        return customerDTO1;
+    }
+
+
 }

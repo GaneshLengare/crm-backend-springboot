@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/aepi/customrs")
 @RequiredArgsConstructor
@@ -38,6 +40,20 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> getSingleCustomer(@PathVariable String phoneNumber) {
         CustomerDTO customerDTO = customerService.getCustomerByPhone(phoneNumber);
         return ResponseEntity.ok(customerDTO);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CustomerDTO>> searchCustomers(@RequestParam String keyword) {
+        List<CustomerDTO> searchedCustomers = customerService.searchCustomers(keyword);
+        return ResponseEntity.ok(searchedCustomers);
+    }
+
+
+
+    @PutMapping("/{phoneNumber}")
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable String phoneNumber, @RequestBody  CustomerUpdateDTO customerDTO){
+        CustomerDTO customerDTO1 = customerService.updateCustomer(phoneNumber, customerDTO);
+        return  ResponseEntity.ok(customerDTO1);
     }
 
 }
