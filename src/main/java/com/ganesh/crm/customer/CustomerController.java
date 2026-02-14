@@ -30,7 +30,7 @@ public class CustomerController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<Page<CustomerDTO>> getAllCustomers (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int size, @RequestParam(defaultValue = "createdAt") String sortBy) {
+    public ResponseEntity<Page<CustomerDTO>> getAllCustomers (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size, @RequestParam(defaultValue = "createdAt") String sortBy) {
         Page<CustomerDTO> customers = customerService.getAllCustomers(page, size, sortBy);
         return ResponseEntity.ok(customers);
     }
@@ -54,6 +54,11 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable String phoneNumber, @RequestBody  CustomerUpdateDTO customerDTO){
         CustomerDTO customerDTO1 = customerService.updateCustomer(phoneNumber, customerDTO);
         return  ResponseEntity.ok(customerDTO1);
+    }
+
+    @DeleteMapping("/{phoneNumber}")
+    public void deleteCustomer(@PathVariable String phoneNumber) {
+        customerService.deleteCustomer(phoneNumber);
     }
 
 }

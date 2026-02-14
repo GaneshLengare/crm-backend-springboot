@@ -111,5 +111,10 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDTO1;
     }
 
+    @Override
+    public void deleteCustomer(String phoneNumber) {
+        customerRepository.deleteById(phoneNumber);
+    }
+
 
 }

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserDTO {
 
-    @NotBlank
+
     @Size(min = 10, max = 12)
     private String phoneNumber;
 
