@@ -8,13 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/aepi/customrs")
+@RequestMapping("/api/customers")
 @RequiredArgsConstructor
 public class CustomerController {
 
@@ -22,6 +23,7 @@ public class CustomerController {
     private CustomerService customerService;
 
 
+    @PreAuthorize("hasAuthority('CUSTOMER_CREATE')")
     @PostMapping("/register")
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
 
@@ -29,6 +31,7 @@ public class CustomerController {
         return new ResponseEntity<>(customerDTO1,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping("/")
     public ResponseEntity<Page<CustomerDTO>> getAllCustomers (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size, @RequestParam(defaultValue = "createdAt") String sortBy) {
         Page<CustomerDTO> customers = customerService.getAllCustomers(page, size, sortBy);
@@ -36,12 +39,14 @@ public class CustomerController {
     }
 
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping("/{phoneNumber}")
     public ResponseEntity<CustomerDTO> getSingleCustomer(@PathVariable String phoneNumber) {
         CustomerDTO customerDTO = customerService.getCustomerByPhone(phoneNumber);
         return ResponseEntity.ok(customerDTO);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping("/search")
     public ResponseEntity<List<CustomerDTO>> searchCustomers(@RequestParam String keyword) {
         List<CustomerDTO> searchedCustomers = customerService.searchCustomers(keyword);
@@ -50,12 +55,14 @@ public class CustomerController {
 
 
 
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
     @PutMapping("/{phoneNumber}")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable String phoneNumber, @RequestBody  CustomerUpdateDTO customerDTO){
         CustomerDTO customerDTO1 = customerService.updateCustomer(phoneNumber, customerDTO);
         return  ResponseEntity.ok(customerDTO1);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     @DeleteMapping("/{phoneNumber}")
     public void deleteCustomer(@PathVariable String phoneNumber) {
         customerService.deleteCustomer(phoneNumber);

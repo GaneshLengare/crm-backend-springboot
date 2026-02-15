@@ -116,5 +116,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(phoneNumber);
     }
 
+    //Pending
+    @Override
+    public List<Customer> getCustomersByUser(String phoneNumber) {
+        return List.of();
+    }
+
 
 }

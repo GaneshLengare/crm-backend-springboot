@@ -25,4 +25,6 @@ public interface CustomerService {
 
     void deleteCustomer(String phoneNumber);
 
+    List<Customer> getCustomersByUser(String phoneNumber);
+
 }

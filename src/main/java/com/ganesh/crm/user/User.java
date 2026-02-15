@@ -46,7 +46,7 @@ public class User {
     private String address;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_type_id")
     private UserType userType;          // Foregion key for the user_type
 

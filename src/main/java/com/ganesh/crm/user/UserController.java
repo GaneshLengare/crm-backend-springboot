@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserController {
 
     //Error : The error Type 'org.hibernate.query.Page' does not have type parameters happens because Hibernate's internal Page class is legacy and does not support Generics (<UserDTO>).
     // NOTE : Page size must not less than one
+    @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping
     public ResponseEntity<Page<UserDTO>> listAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size, @RequestParam(defaultValue = "phoneNumber") String sortBy){
         Page<UserDTO> pageList = userService.listAllUsers(page, size, sortBy);
@@ -35,6 +37,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping("/{phoneNumber}")
     public ResponseEntity<UserDTO> singleUser(@PathVariable String phoneNumber) {
         UserDTO singleUser = userService.sigleUser(phoneNumber);
@@ -42,12 +45,14 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<UserDTO>> searchUser(@PathVariable String keyword) {
         List<UserDTO> userDTOS = userService.searchUser(keyword);
         return ResponseEntity.ok(userDTOS);
     }
 
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @PutMapping("/update/{phoneNumber}")
     public ResponseEntity<UserDTO> updateUserDetails(@PathVariable String phoneNumber, @RequestBody UserDTO userDTO) {
         UserDTO userDTO1 = userService.updateUser(phoneNumber, userDTO);

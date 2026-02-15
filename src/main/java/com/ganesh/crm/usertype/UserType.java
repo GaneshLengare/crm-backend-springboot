@@ -24,9 +24,9 @@ public class UserType {
 
     private String description;
 
-  /*  @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_type_permissions",
     joinColumns = @JoinColumn(name = "user_type_id"),
     inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private Set<Permission> permissions;*/
+    private Set<Permission> permissions;
 }
