@@ -68,4 +68,15 @@ public class CustomerController {
         customerService.deleteCustomer(phoneNumber);
     }
 
+    //bulk update of customer information
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
+    @PutMapping("/bulk-update")
+    public ResponseEntity<String> bulkUpdateCustomers(
+            @RequestBody List<CustomerUpdateDTO> customers) {
+
+        customerService.bulkUpdate(customers);
+        return ResponseEntity.ok("Customers updated successfully");
+    }
+
+
 }

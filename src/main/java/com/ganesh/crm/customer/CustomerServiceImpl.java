@@ -222,6 +222,120 @@ public class CustomerServiceImpl implements CustomerService {
 
 
 
+
+   // Bulk update cust info
+   @Transactional
+   @Override
+   public void bulkUpdate(List<CustomerUpdateDTO> dtos) {
+
+       String updatedBy = SecurityContextHolder
+               .getContext()
+               .getAuthentication()
+               .getName();
+
+       List<CustomerAudit> auditLogs = new ArrayList<>();
+
+       for (CustomerUpdateDTO dto : dtos) {
+
+           Customer existing = customerRepository
+                   .findById(dto.getPhoneNumber())
+                   .orElseThrow(() ->
+                           new RuntimeException(
+                                   "Customer not found: "
+                                           + dto.getPhoneNumber()));
+
+           // FIRST NAME
+           if (!Objects.equals(existing.getFirstName(), dto.getFirstName())) {
+
+               auditLogs.add(new CustomerAudit(
+                       null,
+                       dto.getPhoneNumber(),
+                       "firstName",
+                       existing.getFirstName(),
+                       dto.getFirstName(),
+                       updatedBy,
+                       LocalDateTime.now()
+               ));
+
+               existing.setFirstName(dto.getFirstName());
+           }
+
+           // LAST NAME
+           if (!Objects.equals(existing.getLastName(), dto.getLastName())) {
+
+               auditLogs.add(new CustomerAudit(
+                       null,
+                       dto.getPhoneNumber(),
+                       "lastName",
+                       existing.getLastName(),
+                       dto.getLastName(),
+                       updatedBy,
+                       LocalDateTime.now()
+               ));
+
+               existing.setLastName(dto.getLastName());
+           }
+
+           // EMAIL
+           if (!Objects.equals(existing.getEmail(), dto.getEmail())) {
+
+               auditLogs.add(new CustomerAudit(
+                       null,
+                       dto.getPhoneNumber(),
+                       "email",
+                       existing.getEmail(),
+                       dto.getEmail(),
+                       updatedBy,
+                       LocalDateTime.now()
+               ));
+
+               existing.setEmail(dto.getEmail());
+           }
+
+           // ADDRESS
+           if (!Objects.equals(existing.getAddress(), dto.getAddress())) {
+
+               auditLogs.add(new CustomerAudit(
+                       null,
+                       dto.getPhoneNumber(),
+                       "address",
+                       existing.getAddress(),
+                       dto.getAddress(),
+                       updatedBy,
+                       LocalDateTime.now()
+               ));
+
+               existing.setAddress(dto.getAddress());
+           }
+
+           // STATUS
+           if (dto.getStatus() != null &&
+                   !Objects.equals(existing.getStatus(), dto.getStatus())) {
+
+               auditLogs.add(new CustomerAudit(
+                       null,
+                       dto.getPhoneNumber(),
+                       "status",
+                       existing.getStatus().name(),
+                       dto.getStatus().name(),
+                       updatedBy,
+                       LocalDateTime.now()
+               ));
+
+               existing.setStatus(dto.getStatus());
+           }
+
+           customerRepository.save(existing);
+       }
+
+       // Save all audit logs in batch
+       if (!auditLogs.isEmpty()) {
+           customerAuditLogRepository.saveAll(auditLogs);
+       }
+   }
+
+
+
     @Override
     public void deleteCustomer(String phoneNumber) {
         customerRepository.deleteById(phoneNumber);

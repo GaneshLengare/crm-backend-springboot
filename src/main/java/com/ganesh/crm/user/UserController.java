@@ -59,4 +59,23 @@ public class UserController {
         return ResponseEntity.ok(userDTO1);
     }
 
+
+    // pending : permission
+    //INACTIVE the user
+    @PatchMapping("/{phoneNumber}/disable")
+    public ResponseEntity<String> disableUser(@PathVariable String phoneNumber) {
+        userService.disableUser(phoneNumber);
+        return ResponseEntity.ok("User disabled successfully");
+    }
+
+
+    //Pending : permission
+    //ACTIVE the user
+    @PatchMapping("/{phoneNumber}/enable")
+    public ResponseEntity<String> enableUser(@PathVariable String phoneNumber) {
+        userService.enableUser(phoneNumber);
+        return ResponseEntity.ok("User enabled successfully");
+    }
+
+
 }

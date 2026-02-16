@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerUpdateDTO {
+    private String phoneNumber;
 
     @Size(min = 2, max = 50, message = "first name is least 2 character and most 50")
     private String firstName;

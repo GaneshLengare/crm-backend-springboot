@@ -2,6 +2,7 @@ package com.ganesh.crm.user;
 
 import com.ganesh.crm.usertype.UserTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
@@ -114,5 +115,39 @@ public class UserServiceImpl implements UserService{
         return userNew;
 
     }
+
+
+    //disable user
+    @Transactional
+    public void disableUser(String phoneNumber) {
+
+        User user = userRepository.findById(phoneNumber)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getStatus() == User.Status.INACTIVE) {
+            throw new RuntimeException("User already inactive");
+        }
+
+        user.setStatus(User.Status.INACTIVE);
+
+        userRepository.save(user);
+    }
+
+    //enable user
+    @Transactional
+    public void enableUser(String phoneNumber) {
+
+        User user = userRepository.findById(phoneNumber)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getStatus() == User.Status.ACTIVE) {
+            throw new RuntimeException("User already active");
+        }
+
+        user.setStatus(User.Status.ACTIVE);
+
+        userRepository.save(user);
+    }
+
 
 }

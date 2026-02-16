@@ -19,4 +19,8 @@ public interface UserService {
 
     UserDTO updateUser(String phoneNumber, UserDTO userDTO);
 
+    void disableUser(String phoneNumber);
+
+    void enableUser(String phoneNumber);
+
 }

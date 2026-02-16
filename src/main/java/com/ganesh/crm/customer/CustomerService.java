@@ -27,4 +27,8 @@ public interface CustomerService {
 
     List<Customer> getCustomersByUser(String phoneNumber);
 
+    //bulk
+    void bulkUpdate(List<CustomerUpdateDTO> customers);
+
+
 }
