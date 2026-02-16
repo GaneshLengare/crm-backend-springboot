@@ -1,9 +1,13 @@
 package com.ganesh.crm.customer;
 
+
+import com.ganesh.crm.audit.CustomerAudit;
+import com.ganesh.crm.audit.CustomerAuditLogRepository;
 import com.ganesh.crm.user.User;
 import com.ganesh.crm.user.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,9 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -26,6 +35,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private CustomerAuditLogRepository customerAuditLogRepository;
 
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
@@ -86,7 +98,7 @@ public class CustomerServiceImpl implements CustomerService {
         }).toList();
     }
 
-    @Override
+   /* @Override
     public CustomerDTO updateCustomer(String phoneNumber, CustomerUpdateDTO customerDTO) {
        Customer customer = customerRepository.findById(phoneNumber).orElseThrow(() -> new EntityNotFoundException("Customer Not FOUND"));
 
@@ -109,7 +121,106 @@ public class CustomerServiceImpl implements CustomerService {
         customerDTO1.setUserPhone(updateCustomer.getUser().getPhoneNumber());
 
         return customerDTO1;
-    }
+    }*/
+   @Transactional
+   @Override
+   public CustomerDTO updateCustomer(
+           String phoneNumber,
+           CustomerUpdateDTO dto) {
+
+       Customer existing = customerRepository.findById(phoneNumber)
+               .orElseThrow(() ->
+                       new RuntimeException("Customer not found"));
+
+       // Logged-in user phone number
+       String updatedBy = SecurityContextHolder
+               .getContext()
+               .getAuthentication()
+               .getName();
+
+       List<CustomerAudit> logs = new ArrayList<>();
+
+       // first name
+       if (!Objects.equals(existing.getFirstName(), dto.getFirstName())) {
+
+           logs.add(new CustomerAudit(
+                   null, phoneNumber, "firstName",
+                   existing.getFirstName(),
+                   dto.getFirstName(),
+                   updatedBy,
+                   LocalDateTime.now()
+           ));
+
+           existing.setFirstName(dto.getFirstName());
+       }
+
+       // for last name
+       if (!Objects.equals(existing.getLastName(), dto.getLastName())) {
+
+           logs.add(new CustomerAudit(
+                   null, phoneNumber, "lastName",
+                   existing.getLastName(),
+                   dto.getLastName(),
+                   updatedBy,
+                   LocalDateTime.now()
+           ));
+
+           existing.setLastName(dto.getLastName());
+       }
+
+       // email update track
+       if (!Objects.equals(existing.getEmail(), dto.getEmail())) {
+
+           logs.add(new CustomerAudit(
+                   null, phoneNumber, "email",
+                   existing.getEmail(),
+                   dto.getEmail(),
+                   updatedBy,
+                   LocalDateTime.now()
+           ));
+
+           existing.setEmail(dto.getEmail());
+       }
+
+       // for address track
+       if (!Objects.equals(existing.getAddress(), dto.getAddress())) {
+
+           logs.add(new CustomerAudit(
+                   null, phoneNumber, "address",
+                   existing.getAddress(),
+                   dto.getAddress(),
+                   updatedBy,
+                   LocalDateTime.now()
+           ));
+
+           existing.setAddress(dto.getAddress());
+       }
+
+       // status
+       if (dto.getStatus() != null &&
+               !Objects.equals(existing.getStatus(), dto.getStatus())) {
+
+           logs.add(new CustomerAudit(
+                   null, phoneNumber, "status",
+                   existing.getStatus().name(),
+                   dto.getStatus().name(),
+                   updatedBy,
+                   LocalDateTime.now()
+           ));
+
+           existing.setStatus(dto.getStatus());
+       }
+
+       customerRepository.save(existing);
+
+       if (!logs.isEmpty()) {
+           customerAuditLogRepository.saveAll(logs);
+       }
+
+       return modelMapper.map(existing, CustomerDTO.class);
+   }
+
+
 
     @Override
     public void deleteCustomer(String phoneNumber) {
