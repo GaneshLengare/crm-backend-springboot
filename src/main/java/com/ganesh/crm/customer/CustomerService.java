@@ -38,5 +38,8 @@ public interface CustomerService {
     //Bulk update
     BulkUploadResponse bulkCreateCustomers(MultipartFile file);
 
+    //To merge the customers
+    CustomerDTO mergeCustomers(String primaryPhone, String secondaryPhone);
+
 
 }

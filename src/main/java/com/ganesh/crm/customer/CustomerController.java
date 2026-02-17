@@ -1,7 +1,5 @@
 package com.ganesh.crm.customer;
 
-import com.ganesh.crm.customer.CustomerDTO;
-import com.ganesh.crm.customer.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -100,6 +97,20 @@ public class CustomerController {
                         "attachment; filename=customers.csv")
                 .header("Content-Type", "text/csv")
                 .body(csvData);
+    }
+
+
+    //to merge the two customers
+    @PostMapping("/merge")
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
+    public ResponseEntity<CustomerDTO> mergeCustomers(@RequestBody CustomerMergeDTO request) {
+
+        CustomerDTO dto = customerService.mergeCustomers(
+                request.getPrimaryPhone(),
+                request.getSecondaryPhone()
+        );
+
+        return ResponseEntity.ok(dto);
     }
 
 

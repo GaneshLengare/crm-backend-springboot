@@ -461,4 +461,39 @@ public class CustomerServiceImpl implements CustomerService {
 
 
 
+    //Megrge customers
+    @Transactional
+    public CustomerDTO mergeCustomers(String primaryPhone, String secondaryPhone) {
+
+        Customer primary = customerRepository.findById(primaryPhone).orElseThrow(() -> new EntityNotFoundException("Primary customer not found"));
+
+        Customer secondary = customerRepository.findById(secondaryPhone).orElseThrow(() -> new EntityNotFoundException("Secondary customer not found"));
+
+        if (primaryPhone.equals(secondaryPhone)) {
+            throw new IllegalArgumentException("Cannot merge same customer");
+        }
+
+        if (primary.getEmail() == null)
+            primary.setEmail(secondary.getEmail());
+
+        if (primary.getAddress() == null)
+            primary.setAddress(secondary.getAddress());
+
+        if (primary.getFirstName() == null)
+            primary.setFirstName(secondary.getFirstName());
+
+        if (primary.getLastName() == null)
+            primary.setLastName(secondary.getLastName());
+
+
+        customerRepository.delete(secondary);
+
+        Customer saved = customerRepository.save(primary);
+
+        return modelMapper.map(saved, CustomerDTO.class);
+    }
+
+
+
+
 }
