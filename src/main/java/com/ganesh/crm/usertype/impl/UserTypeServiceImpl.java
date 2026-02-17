@@ -1,15 +1,16 @@
-package com.ganesh.crm.usertype;
+package com.ganesh.crm.usertype.impl;
 
-import com.ganesh.crm.user.User;
+import com.ganesh.crm.usertype.UserType;
+import com.ganesh.crm.usertype.UserTypeRepository;
+import com.ganesh.crm.usertype.UserTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
 @Service
-public class UserTypeServiceImpl implements UserTypeService{
+public class UserTypeServiceImpl implements UserTypeService {
 
     @Autowired
     private UserTypeRepository userTypeRepository;

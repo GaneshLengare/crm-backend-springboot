@@ -1,5 +1,9 @@
-package com.ganesh.crm.permission;
+package com.ganesh.crm.permission.impl;
 
+import com.ganesh.crm.permission.Permission;
+import com.ganesh.crm.permission.PermissionDTO;
+import com.ganesh.crm.permission.PermissionRepository;
+import com.ganesh.crm.permission.PermissionService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PermissionServiceImpl implements PermissionService{
+public class PermissionServiceImpl implements PermissionService {
 
     @Autowired
     private PermissionRepository permissionRepository;

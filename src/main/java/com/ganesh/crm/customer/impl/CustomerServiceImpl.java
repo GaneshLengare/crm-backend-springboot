@@ -1,11 +1,11 @@
-package com.ganesh.crm.customer;
+package com.ganesh.crm.customer.impl;
 
 
 import com.ganesh.crm.audit.CustomerAudit;
 import com.ganesh.crm.audit.CustomerAuditLogRepository;
+import com.ganesh.crm.customer.*;
 import com.ganesh.crm.user.User;
 import com.ganesh.crm.user.UserRepository;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

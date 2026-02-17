@@ -1,11 +1,14 @@
-package com.ganesh.crm.user;
+package com.ganesh.crm.user.impl;
 
+import com.ganesh.crm.user.User;
+import com.ganesh.crm.user.UserDTO;
+import com.ganesh.crm.user.UserRepository;
+import com.ganesh.crm.user.UserService;
 import com.ganesh.crm.usertype.UserTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
