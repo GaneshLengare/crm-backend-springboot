@@ -78,4 +78,20 @@ public class UserController {
     }
 
 
+    //Download user CSV file
+    //Pendings : Give the excel support
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportUsersToCSV() {
+
+        byte[] csvData = userService.generateUserCSV();
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition",
+                        "attachment; filename=users.csv")
+                .header("Content-Type", "text/csv")
+                .body(csvData);
+    }
+
+
+
 }

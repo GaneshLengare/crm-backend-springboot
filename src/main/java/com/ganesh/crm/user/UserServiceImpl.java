@@ -149,5 +149,32 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
     }
 
+    public byte[] generateUserCSV() {
+
+        List<User> users = userRepository.findAll();
+
+        StringBuilder csv = new StringBuilder();
+
+        // Header
+        csv.append("PhoneNumber,FirstName,LastName,Email,Address,Status,UserType,CreatedAt,UpdatedAt\n");
+
+        for (User u : users) {
+
+            csv.append(u.getPhoneNumber()).append(",")
+                    .append(u.getFirstName()).append(",")
+                    .append(u.getLastName()).append(",")
+                    .append(u.getEmail()).append(",")
+                    .append(u.getAddress()).append(",")
+                    .append(u.getStatus()).append(",")
+                    .append(u.getUserType().getId()).append(",")
+                    .append(u.getCreatedAt()).append(",")
+                    .append(u.getUpdatedAt())
+                    .append("\n");
+        }
+
+        return csv.toString().getBytes();
+    }
+
+
 
 }

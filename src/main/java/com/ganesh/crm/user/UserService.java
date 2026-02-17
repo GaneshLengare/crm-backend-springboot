@@ -23,4 +23,6 @@ public interface UserService {
 
     void enableUser(String phoneNumber);
 
+    byte[] generateUserCSV();
+
 }

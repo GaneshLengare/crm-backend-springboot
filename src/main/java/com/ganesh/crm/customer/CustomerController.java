@@ -91,5 +91,21 @@ public class CustomerController {
     }
 
 
+    //Download CSV file of customers
+    //ISSUE + TASK : This data comes as CSV format give it a excel support to download
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportCustomersToCSV() {
+
+        byte[] csvData = customerService.generateCustomerCSV();
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition",
+                        "attachment; filename=customers.csv")
+                .header("Content-Type", "text/csv")
+                .body(csvData);
+    }
+
+
+
 
 }

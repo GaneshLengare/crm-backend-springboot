@@ -344,7 +344,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(phoneNumber);
     }
 
-    //Pending
+    //Pending - > done
     @Override
     public List<CustomerDTO> getCustomersByUser(String phoneNumber) {
         List<Customer> customers = customerRepository.findByUser_PhoneNumber(phoneNumber);
@@ -353,6 +353,33 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(customer -> modelMapper.map(customer, CustomerDTO.class))
                 .toList();
     }
+
+    public byte[] generateCustomerCSV() {
+
+        List<Customer> customers = customerRepository.findAll();
+
+        StringBuilder csv = new StringBuilder();
+
+        // Header
+        csv.append("PhoneNumber,FirstName,LastName,Email,Address,Status,UserPhone,CreatedAt,UpdatedAt\n");
+
+        for (Customer c : customers) {
+
+            csv.append(c.getPhoneNumber()).append(",")
+                    .append(c.getFirstName()).append(",")
+                    .append(c.getLastName()).append(",")
+                    .append(c.getEmail()).append(",")
+                    .append(c.getAddress()).append(",")
+                    .append(c.getStatus()).append(",")
+                    .append(c.getUser().getPhoneNumber()).append(",")
+                    .append(c.getCreatedAt()).append(",")
+                    .append(c.getUpdatedAt())
+                    .append("\n");
+        }
+
+        return csv.toString().getBytes();
+    }
+
 
 
 }

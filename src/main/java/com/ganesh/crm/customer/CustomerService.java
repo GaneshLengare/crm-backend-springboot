@@ -32,5 +32,7 @@ public interface CustomerService {
     //bulk
     void bulkUpdate(List<CustomerUpdateDTO> customers);
 
+    byte[] generateCustomerCSV();
+
 
 }
