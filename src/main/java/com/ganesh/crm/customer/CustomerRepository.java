@@ -16,5 +16,10 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "OR c.phoneNumber LIKE CONCAT('%', :keyword, '%')")
     List<Customer> searchCustomers(@Param("keyword") String keyword);
 
-    List<Customer> findCustomersByPhoneNumber(String phoneNumber);
+    //NOTE : Naming of method is very very important to undertstand the JPA to generate query
+    List<Customer> findByUser_PhoneNumber(String phoneNumber);
+
+
+
+
 }

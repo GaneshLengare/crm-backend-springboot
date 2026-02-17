@@ -86,6 +86,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDTO1;
     }
 
+
+
+
     @Override
     public List<CustomerDTO> searchCustomers(String keyword) {
         List<Customer> customer = customerRepository.searchCustomers(keyword);
@@ -343,8 +346,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     //Pending
     @Override
-    public List<Customer> getCustomersByUser(String phoneNumber) {
-        return List.of();
+    public List<CustomerDTO> getCustomersByUser(String phoneNumber) {
+        List<Customer> customers = customerRepository.findByUser_PhoneNumber(phoneNumber);
+
+        return customers.stream()
+                .map(customer -> modelMapper.map(customer, CustomerDTO.class))
+                .toList();
     }
 
 

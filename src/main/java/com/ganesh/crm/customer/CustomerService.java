@@ -18,6 +18,8 @@ public interface CustomerService {
     CustomerDTO getCustomerByPhone(String phoneNumber);
 
 
+
+
     List<CustomerDTO> searchCustomers(String keyword);
 
 
@@ -25,7 +27,7 @@ public interface CustomerService {
 
     void deleteCustomer(String phoneNumber);
 
-    List<Customer> getCustomersByUser(String phoneNumber);
+    List<CustomerDTO> getCustomersByUser(String phoneNumber);
 
     //bulk
     void bulkUpdate(List<CustomerUpdateDTO> customers);
