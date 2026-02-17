@@ -19,6 +19,8 @@ public interface UserService {
 
     UserDTO updateUser(String phoneNumber, UserDTO userDTO);
 
+    void resetPassword(String phoneNumber, UserPasswordResetDTO dto);
+
     void disableUser(String phoneNumber);
 
     void enableUser(String phoneNumber);

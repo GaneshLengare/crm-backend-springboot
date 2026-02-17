@@ -60,6 +60,16 @@ public class UserController {
     }
 
 
+    //Password Reset of user (permission for the only ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{phoneNumber}/reset-password")
+    public ResponseEntity<String> resetPassword(@PathVariable String phoneNumber, @RequestBody @Valid UserPasswordResetDTO userPasswordResetDTO) {
+
+        userService.resetPassword(phoneNumber, userPasswordResetDTO);
+        return ResponseEntity.ok("Password reset successfully");
+    }
+
+
     // pending : permission
     //INACTIVE the user
     @PatchMapping("/{phoneNumber}/disable")

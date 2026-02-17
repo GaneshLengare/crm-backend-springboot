@@ -1,9 +1,7 @@
 package com.ganesh.crm.user.impl;
 
-import com.ganesh.crm.user.User;
-import com.ganesh.crm.user.UserDTO;
-import com.ganesh.crm.user.UserRepository;
-import com.ganesh.crm.user.UserService;
+import com.ganesh.crm.exception.PassMismatchException;
+import com.ganesh.crm.user.*;
 import com.ganesh.crm.usertype.UserTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -117,6 +115,22 @@ public class UserServiceImpl implements UserService {
 
         return userNew;
 
+    }
+
+
+    //Reseting paswsword logic
+    public void resetPassword(String phoneNumber, UserPasswordResetDTO dto) {
+
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+            throw new PassMismatchException("New password and confirm password do not match");
+        }
+
+        User user = userRepository.findById(phoneNumber)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
+        userRepository.save(user);
     }
 
 
