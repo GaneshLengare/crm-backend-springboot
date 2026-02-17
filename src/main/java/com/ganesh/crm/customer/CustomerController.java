@@ -71,8 +71,7 @@ public class CustomerController {
     //bulk update of customer information
     @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
     @PutMapping("/bulk-update")
-    public ResponseEntity<String> bulkUpdateCustomers(
-            @RequestBody List<CustomerUpdateDTO> customers) {
+    public ResponseEntity<String> bulkUpdateCustomers(@RequestBody List<CustomerUpdateDTO> customers) {
 
         customerService.bulkUpdate(customers);
         return ResponseEntity.ok("Customers updated successfully");
@@ -81,11 +80,9 @@ public class CustomerController {
 
     //Customers under user
     @GetMapping("/users/{phoneNumber}/customers")
-    public ResponseEntity<List<CustomerDTO>> getCustomersByUser(
-            @PathVariable String phoneNumber) {
+    public ResponseEntity<List<CustomerDTO>> getCustomersByUser(@PathVariable String phoneNumber) {
 
-        List<CustomerDTO> customers =
-                customerService.getCustomersByUser(phoneNumber);
+        List<CustomerDTO> customers = customerService.getCustomersByUser(phoneNumber);
 
         return ResponseEntity.ok(customers);
     }

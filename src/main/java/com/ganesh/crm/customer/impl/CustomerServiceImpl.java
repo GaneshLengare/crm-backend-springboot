@@ -8,6 +8,9 @@ import com.ganesh.crm.user.User;
 import com.ganesh.crm.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,8 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -355,10 +361,8 @@ public class CustomerServiceImpl implements CustomerService {
     public byte[] generateCustomerCSV() {
 
         List<Customer> customers = customerRepository.findAll();
-
         StringBuilder csv = new StringBuilder();
 
-        // Header
         csv.append("PhoneNumber,FirstName,LastName,Email,Address,Status,UserPhone,CreatedAt,UpdatedAt\n");
 
         for (Customer c : customers) {
@@ -376,6 +380,83 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         return csv.toString().getBytes();
+    }
+
+
+    //Bulk creation of customers from csv
+    @Override
+    public BulkUploadResponse bulkCreateCustomers(MultipartFile file) {
+
+        int success = 0;
+        int failure = 0;
+        List<String> errors = new ArrayList<>();
+
+        try (Reader reader =
+                     new InputStreamReader(file.getInputStream())) {
+
+            CSVParser csvParser = CSVFormat.DEFAULT
+                    .withFirstRecordAsHeader()
+                    .parse(reader);
+
+            for (CSVRecord record : csvParser) {
+                try {
+                    String phone = record.get("phoneNumber");
+                    String email = record.get("email");
+
+                    if (phone == null || phone.length() != 10) {
+                        throw new RuntimeException(
+                                "Invalid phone: " + phone);
+                    }
+                    if (customerRepository.existsById(phone)) {
+                        throw new RuntimeException(
+                                "Phone already exists: " + phone);
+                    }
+
+                    String userPhone = record.get("userPhone");
+
+                    if (!userRepository.existsById(userPhone)) {
+                        throw new RuntimeException(
+                                "User not found: " + userPhone);
+                    }
+
+                    Customer customer = new Customer();
+
+                    customer.setPhoneNumber(phone);
+                    customer.setFirstName(record.get("firstName"));
+                    customer.setLastName(record.get("lastName"));
+                    customer.setEmail(email);
+                    customer.setAddress(record.get("address"));
+                    customer.setStatus(
+                            Customer.Status.valueOf(
+                                    record.get("status")
+                            )
+                    );
+                    customer.setUser(
+                            userRepository.findById(userPhone).get()
+                    );
+
+                    customerRepository.save(customer);
+                    success++;
+
+                } catch (Exception e) {
+                    failure++;
+                    errors.add(
+                            "Row " + record.getRecordNumber()
+                                    + ": " + e.getMessage()
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("File processing failed", e);
+        }
+
+        return new BulkUploadResponse(
+                success + failure,
+                success,
+                failure,
+                errors
+        );
     }
 
 
